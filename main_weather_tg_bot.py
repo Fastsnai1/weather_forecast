@@ -43,7 +43,7 @@ async def get_weather(message: types.Message):
         else:
             wd = 'Посмотри в окно, не пойму что там за погода....'
 
-        name = data['name']
+        name = coordinates[0]['local_names']['ru']
         temp = data['main']['temp']
         humidity = data['main']['humidity']
         pressure = data['main']['pressure']
