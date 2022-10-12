@@ -5,7 +5,6 @@ from aiogram import Bot, types
 from aiogram.dispatcher import Dispatcher
 from aiogram.utils import executor
 
-
 bot = Bot(token=tg_bot_token)
 dp = Dispatcher(bot)
 
@@ -17,7 +16,6 @@ async def start_command(message: types.Message):
 
 @dp.message_handler()
 async def get_weather(message: types.Message):
-
     code_to_smile = {
         'Clear': 'Ясно \U00002600',
         'Clouds': 'Облачно \U00002601',
@@ -56,16 +54,16 @@ async def get_weather(message: types.Message):
             data['sys']['sunrise'])
 
         await message.reply(f'***{datetime.datetime.now().strftime("%d.%m.%Y %H:%M")}***\n'
-              f'Погода в городе: {name}:\nТемпература: {temp}°C {wd}\n'
-              f'Влажность: {humidity}%\nДавление: {pressure} мм.рт.ст.\n'
-              f'Скорость ветра: {wind_speed} М/с\n'
-              f'Восход солндца: {timestamp_sunrise}\nЗакат: {timestamp_sunset}\n'
-              f'Продолжительность светового дня: {full_day}\n'
-              f'Хорошего дня!'
-              )
+                            f'Погода в городе: {name}:\nТемпература: {temp}°C {wd}\n'
+                            f'Влажность: {humidity}%\nДавление: {pressure} мм.рт.ст.\n'
+                            f'Скорость ветра: {wind_speed} М/с\n'
+                            f'Восход солндца: {timestamp_sunrise}\nЗакат: {timestamp_sunset}\n'
+                            f'Продолжительность светового дня: {full_day}\n'
+                            f'Хорошего дня!'
+                            )
     except:
         await message.reply('\U00002620 Проверь название города, пиши на английском. \U00002620')
 
+
 if __name__ == '__main__':
     executor.start_polling(dp)
-

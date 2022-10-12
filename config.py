@@ -1,2 +1,4 @@
 open_weather_token = "35d6f020402f4592030b0a6fbfb35ef7"
-tg_bot_token = '5717005008:AAG61Z4vgyG60raVKLAyhiNgSoZdbqNEhPU'
+with open('/home/miritelli/Porject/token.txt', 'r') as t:
+    token1 = t.readlines()
+tg_bot_token = f'{token1[0]}'
