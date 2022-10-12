@@ -1,10 +1,22 @@
 import requests
-from pprint import pprint
 import datetime
-from config import open_weather_token
+from config import tg_bot_token, open_weather_token
+from aiogram import Bot, types
+from aiogram.dispatcher import Dispatcher
+from aiogram.utils import executor
 
 
-def get_weather(city, token):
+bot = Bot(token=tg_bot_token)
+dp = Dispatcher(bot)
+
+
+@dp.message_handler(commands=['start'])
+async def start_command(message: types.Message):
+    await message.reply('Привет! Напиши мне название города и я отправлю тебе сводку погоды.')
+
+
+@dp.message_handler()
+async def get_weather(message: types.Message):
 
     code_to_smile = {
         'Clear': 'Ясно \U00002600',
@@ -18,16 +30,15 @@ def get_weather(city, token):
 
     try:
         r1 = requests.get(
-            f'http://api.openweathermap.org/geo/1.0/direct?q={city}&limit={1}&appid={token}'
+            f'http://api.openweathermap.org/geo/1.0/direct?q={message.text}&limit={1}&appid={open_weather_token}'
         )
         coordinates = r1.json()
         lat = coordinates[0]['lat']
         lon = coordinates[0]['lon']
         r2 = requests.get(
-            f'https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={token}&units=metric'
+            f'https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={open_weather_token}&units=metric'
         )
         data = r2.json()
-        # pprint(data)
         weather_description = data['weather'][0]['main']
         if weather_description in code_to_smile:
             wd = code_to_smile[weather_description]
@@ -44,7 +55,7 @@ def get_weather(city, token):
         full_day = datetime.datetime.fromtimestamp(data['sys']['sunset']) - datetime.datetime.fromtimestamp(
             data['sys']['sunrise'])
 
-        print(f'***{datetime.datetime.now().strftime("%d.%m.%Y %H:%M")}***\n'
+        await message.reply(f'***{datetime.datetime.now().strftime("%d.%m.%Y %H:%M")}***\n'
               f'Погода в городе: {name}:\nТемпература: {temp}°C {wd}\n'
               f'Влажность: {humidity}%\nДавление: {pressure} мм.рт.ст.\n'
               f'Скорость ветра: {wind_speed} М/с\n'
@@ -52,15 +63,9 @@ def get_weather(city, token):
               f'Продолжительность светового дня: {full_day}\n'
               f'Хорошего дня!'
               )
-    except Exception as ex:
-        print(ex)
-        print('Проверьте введённые данные.')
-
-
-def main():
-    city = input('Введите город: ')
-    get_weather(city, open_weather_token)
-
+    except:
+        await message.reply('\U00002620 Проверь название города, пиши на английском. \U00002620')
 
 if __name__ == '__main__':
-    main()
+    executor.start_polling(dp)
+
